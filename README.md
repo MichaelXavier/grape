@@ -335,7 +335,7 @@ params do
     requires :url
   end
   optional :audio do
-    requires :mp3
+    requires :format, type: Symbol, values: [:mp3, :wav, :aac, :ogg], default: :mp3
   end
 end
 put ':id' do
@@ -351,6 +351,14 @@ Optional parameters can have a default value.
 ```ruby
 params do
   optional :color, type: String, default: 'blue'
+end
+```
+
+Parameters can be restricted to a specific set of values with the `:values` option.
+
+```ruby
+params do
+  requires :status, type: Symbol, values: [:not_started, :processing, :done]
 end
 ```
 
@@ -707,13 +715,13 @@ class Twitter::API < Grape::API
 end
 ```
 
-You can rescue all exceptions with a code block. The `rack_response` wrapper
+You can rescue all exceptions with a code block. The `error_response` wrapper
 automatically sets the default error code and content-type.
 
 ```ruby
 class Twitter::API < Grape::API
   rescue_from :all do |e|
-    rack_response({ message: "rescued from #{e.class.name}" })
+    error_response({ message: "rescued from #{e.class.name}" })
   end
 end
 ```
@@ -872,7 +880,7 @@ end
 
 Built-in formats are the following.
 
-* `:json`: use object's `to_json` when available, otherwise call `MultiJson.dump`
+* `:json` and `:jsonapi`: use object's `to_json` when available, otherwise call `MultiJson.dump`
 * `:xml`: use object's `to_xml` when available, usually via `MultiXml`, otherwise call `to_s`
 * `:txt`: use object's `to_txt` when available, otherwise `to_s`
 * `:serializable_hash`: use object's `serializable_hash` when available, otherwise fallback to `:json`
@@ -994,7 +1002,7 @@ hash may include `:with`, which defines the entity to expose.
 ### Grape Entities
 
 Add the [grape-entity](https://github.com/intridea/grape-entity) gem to your Gemfile.
-Please refer to the [grape-entity documentation](https://github.com/intridea/grape-entity/blob/master/README.markdown)
+Please refer to the [grape-entity documentation](https://github.com/intridea/grape-entity/blob/master/README.md)
 for more details.
 
 The following example exposes statuses.
