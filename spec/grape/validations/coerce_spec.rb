@@ -66,7 +66,7 @@ describe Grape::Validations::CoerceValidator do
     context 'complex objects' do
       module CoerceValidatorSpec
         class User
-          include Virtus
+          include Virtus.model
           attribute :id, Integer
           attribute :name, String
         end
@@ -106,7 +106,7 @@ describe Grape::Validations::CoerceValidator do
       end
 
       it 'Array of Bools' do
-        subject.params { requires :arry, :coerce => Array[Virtus::Attribute::Boolean] }
+        subject.params { requires :arry, :coerce => Array[Grape::API::Boolean] }
         subject.get '/array' do params[:arry][0].class; end
 
         get 'array', { :arry => [1, 0] }
@@ -115,7 +115,7 @@ describe Grape::Validations::CoerceValidator do
       end
 
       it 'Bool' do
-        subject.params { requires :bool, :coerce => Virtus::Attribute::Boolean }
+        subject.params { requires :bool, :coerce => Grape::API::Boolean }
         subject.get '/bool' do params[:bool].class; end
 
         get '/bool', { :bool => 1 }
