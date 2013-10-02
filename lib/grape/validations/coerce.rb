@@ -1,7 +1,7 @@
 module Grape
 
   class API
-    Boolean = Axiom::Types::Boolean
+    Boolean = 'Boolean'
   end
 
   module Validations
