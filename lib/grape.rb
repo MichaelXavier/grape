@@ -15,6 +15,7 @@ require 'grape/util/content_types'
 require 'multi_json'
 require 'multi_xml'
 require 'virtus'
+require 'virtus/version'
 require 'i18n'
 
 I18n.load_path << File.expand_path('../grape/locale/en.yml', __FILE__)

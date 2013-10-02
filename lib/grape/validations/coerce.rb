@@ -1,7 +1,7 @@
 module Grape
 
   class API
-    Boolean = Virtus::Attribute::Boolean
+    Boolean = Axiom::Types::Boolean
   end
 
   module Validations
@@ -28,7 +28,8 @@ module Grape
       def _valid_single_type?(klass, val)
         # allow nil, to ignore when a parameter is absent
         return true if val.nil?
-        if klass == Virtus::Attribute::Boolean
+        #FIXME: this is getting gross
+        if klass == API::Boolean
           val.is_a?(TrueClass) || val.is_a?(FalseClass)
         elsif klass == Rack::Multipart::UploadedFile
           val.is_a?(Hashie::Mash) && val.key?(:tempfile)
@@ -46,7 +47,11 @@ module Grape
       end
 
       def coerce_value(type, val)
-        converter = Virtus::Attribute.build(:a, type)
+        if Virtus::VERSION =~ /^1\./
+          converter = Virtus::Attribute.build(type)
+        else
+          converter = Virtus::Attribute.build(:a, type)
+        end
         converter.coerce(val)
 
       # not the prettiest but some invalid coercion can currently trigger
