@@ -169,13 +169,8 @@ module Grape
         end
       end
 
-      def validates(attrs, validations)
+      def extract_doc_attrs(attrs, validations)
         doc_attrs = { :required => validations.keys.include?(:presence) }
-
-        # special case (type = coerce)
-        if validations[:type]
-          validations[:coerce] = validations.delete(:type)
-        end
 
         if coerce_type = validations[:coerce]
           doc_attrs[:type] = coerce_type.to_s
@@ -202,6 +197,17 @@ module Grape
         if coerce_type && values && values.any? { |v| not v.instance_of? coerce_type }
           raise Grape::Exceptions::IncompatibleOptionValues.new(:type, coerce_type, :values, values)
         end
+
+        doc_attrs
+      end
+
+      def validates(attrs, validations)
+        # special case (type = coerce)
+        if validations[:type]
+          validations[:coerce] = validations.delete(:type)
+        end
+
+        doc_attrs = extract_doc_attrs(attrs, validations)
 
         full_attrs = attrs.collect{ |name| { :name => name, :full_name => full_name(name)} }
         @api.document_attribute(full_attrs, doc_attrs)
